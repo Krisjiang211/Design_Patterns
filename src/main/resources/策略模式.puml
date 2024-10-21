@@ -1,0 +1,24 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface  SortStrategy {
+  + void sort(Integer[] arr);
+}
+
+class BubbleSortStrategy {
+  + void sort(Integer[] arr);
+}
+
+class QuickSortStrategy {
+  + void sort(Integer[] arr);
+}
+
+class SortService {
+   -SortStrategy: strategy
+}
+note left: 入口使用类
+
+SortStrategy <|-- BubbleSortStrategy
+SortStrategy <|-- QuickSortStrategy
+SortService o-- SortStrategy
+@enduml

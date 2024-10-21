@@ -1,0 +1,67 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface PayService {
+    String payPage(String type, Long orderId);
+    Object processNotify(HttpServletRequest request,String body);
+}
+
+class PayServiceImpl {
+   - payStrategy: List<PayStrategy>
+   + String payPage(String type, Long orderId)
+   + Object processNotify(HttpServletRequest request,String body)
+   - void processOrder(data);
+}
+
+PayService <|-- PayServiceImpl
+
+note left of PayService::payPage
+  生成支付收银台页面
+end note
+
+note left of PayService::processNotify
+  处理支付成功通知
+end note
+
+note left of PayServiceImpl::payStrategy
+  组合所有支付策略
+end note
+note right of PayServiceImpl: 支付模板
+
+
+interface PayStrategy {
+  boolean supports(String type); //支持的支付方式
+  String cashierPage(OrderInfo orderInfo); //生成支付收银台页面
+  boolean checkSign(HttpServletRequest request,String body); //验签
+  Object signError();  //验签失败返回
+  Object signOk();     //验签成功返回
+  Map<String,Object> process(HttpServletRequest request,String body); //处理成功通知
+
+}
+note top of PayStrategy: 支付策略
+
+class WeixinPayStrategy{
+}
+
+class AlipayStrategy{
+}
+
+PayStrategy <|-- WeixinPayStrategy
+PayStrategy <|-- AlipayStrategy
+PayServiceImpl "1" *-- "N" PayStrategy: 注入所有支付策略
+
+note left of PayServiceImpl::payPage
+  1、supports() 找到对应的支付策略
+  2、getOrderInfo() 获取订单数据
+  3、cashierPage(orderInfo) 生成对应的支付页
+end note
+
+note right of PayServiceImpl::processNotify
+  1、supports() 找到对应的支付策略
+  2、checkSign() 验证签名
+  3、signError() 签名验证失败返回
+  4、signOk() 签名验证成功返回
+  5、process() 处理成功通知的订单数据
+  6、processOrder() 支付成功订单后续业务处理
+end note
+@enduml

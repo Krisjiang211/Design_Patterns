@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class OrderProcessTemplate {
+   ..
+   {abstract} void doSelect(); //选中商品
+   {abstract} void doPayment(); //支付商品
+   {abstract} void doReceipt(); //开具发票
+   {abstract} void doDelivery(); //派送商品
+   ..
+   + final void processOrder(); //处理订单
+}
+note left: 入口使用类
+
+class NetOrder {
+  + void doSelect();
+  + void doPayment();
+  + void doReceipt();
+  + void doSelect();
+}
+
+class StoreOrder{
+  + void doSelect();
+  + void doPayment();
+  + void doReceipt();
+  + void doSelect();
+}
+
+OrderProcessTemplate <|-- NetOrder
+OrderProcessTemplate <|-- StoreOrder
+
+@enduml
